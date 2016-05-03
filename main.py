@@ -104,6 +104,12 @@ class twitter(BaseHandler):
         logging.debug(erantzuna)
         logging.debug(content)
 
+class mapa(BaseHandler):
+    def get(self):
+        template = JINJA_ENVIRONMENT.get_template('mapa.html')
+        template_values = {}
+        self.response.write(template.render(template_values))
+
 
 
 def createAuthHeader(method, base_url, oauth_headers, request_params, oauth_token_secret):
@@ -166,6 +172,7 @@ def createRequestSignature(method, base_url, oauth_headers, request_params, oaut
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/LoginAndAuthorize', LoginAndAuthorize),
-    ('/callback_uri', twitter)
+    ('/callback_uri', twitter),
+    ('/mapa', mapa)
 
 ], config=config, debug=True)
