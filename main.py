@@ -17,8 +17,8 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
-consumer_key = 'CiEQzT75QW1QZPqIUhCZK0sf4'
-consumer_secret = '09wAlEB0tLQg4y9jFWkefX5Y1nOke4iiSoVm5OuuUxop9Hcu0J'
+consumer_key = 'BVz3sbpRsYhtGRcHBZxOyqnMN'
+consumer_secret = 'FizZNzJF2kKZRbAjhVJ1XxZOyWwzPAaIjVTztOkbCGLDxQftpG'
 oauth_token = ''
 oauth_token_secret = ''
 
