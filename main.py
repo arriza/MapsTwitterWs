@@ -87,29 +87,65 @@ class twitter(BaseHandler):
         metodoa = 'POST'
         uri = '/oauth/access_token'
         zerbitzaria = 'api.twitter.com'
-        oauth_headers = {'oauth_token':self.session.get('oauth_token')}
+        oauth_headers = {'oauth_token': self.session.get('oauth_token')}
         params = {'oauth_verifier' : oauth_verifier}
         edukia = urllib.urlencode(params)
         goiburuak = {'User-Agent' : 'MapsTwitterWs',
                      'Host' : zerbitzaria,
                      'Content-Type' : 'application/x-www-form-urlencoded',
-                     'Accept' : '*/*',
                      'Content-Length': str(len(edukia)),
-                     'Authorization':createAuthHeader(metodoa, uri, oauth_headers, params, self.session.get('oauth_token_secret'))}
+                     'Authorization': createAuthHeader(metodoa, 'https://' + zerbitzaria + uri, oauth_headers, params, self.session.get('oauth_token_secret'))}
 
         http = httplib2.Http()
         erantzuna, content = http.request('https://' + zerbitzaria + uri, method=metodoa, headers=goiburuak, body=edukia)
+
+        oauth_split = content.split('&')[0]
+        oauth_split = oauth_split.split('=')[1]
+        self.session['oauth_token'] = oauth_split
+        secret_split = content.split('&')[1]
+        secret_split = secret_split.split('=')[1]
+        self.session['oauth_token_secret'] = secret_split
+
+        '''
         self.response.write(erantzuna)
         self.response.write(content)
         logging.debug(erantzuna)
         logging.debug(content)
+        '''
+        self.redirect('/timeline')
+
+
+class GetTimeLine(BaseHandler):
+    def get(self):
+        logging.debug(self.session.get('oauth_token'))
+        logging.debug(self.session.get('oauth_token_secret'))
+        metodoa = 'GET'
+        base_uri = '/1.1/search/tweets.json'
+        zerbitzaria = 'api.twitter.com'
+        parametroak = {'q': '@bizargorri_'}
+        params_encoded = urllib.urlencode(parametroak)
+        oauth_headers = {'oauth_token': self.session.get('oauth_token')}
+        goiburuak = {'User-Agent': 'MapsTwitterWs',
+                     'Host': zerbitzaria,
+                     'Authorization': createAuthHeader(metodoa, 'https://' + zerbitzaria + base_uri, oauth_headers, parametroak,
+                                                       self.session.get('oauth_token_secret'))}
+
+        http = httplib2.Http()
+        erantzuna, content = http.request('https://' + zerbitzaria + base_uri + '?' + params_encoded, method=metodoa, headers=goiburuak,
+                                          body='')
+        self.response.write(content)
+        logging.debug(erantzuna)
+        logging.debug(content)
+        logging.debug(self.session.get('oauth_token'))
+        logging.debug(self.session.get('oauth_token_secret'))
+
+
 
 class mapa(BaseHandler):
     def get(self):
         template = JINJA_ENVIRONMENT.get_template('mapa.html')
         template_values = {}
         self.response.write(template.render(template_values))
-
 
 
 def createAuthHeader(method, base_url, oauth_headers, request_params, oauth_token_secret):
@@ -137,26 +173,6 @@ def createAuthHeader(method, base_url, oauth_headers, request_params, oauth_toke
 
     return authorization_header
 
-def GetTimeLine(BaseHandler):
-    def get(self):
-        metodoa = 'GET'
-        uri = '/1.1/statuses/user_timeline.json?screen_name=twitterapi&count=2'
-        zerbitzaria = 'api.twitter.com'
-        oauth_headers = {'oauth_token': self.session.get('oauth_token')}
-        goiburuak = {'User-Agent': 'MapsTwitterWs',
-                     'Host': zerbitzaria,
-                     'Content-Type': 'application/x-www-form-urlencoded',
-                     'Accept': '*/*',
-                     'Authorization': createAuthHeader(metodoa, uri, oauth_headers,
-                                                       self.session.get('oauth_token_secret'))}
-
-        http = httplib2.Http()
-        erantzuna, content = http.request('https://' + zerbitzaria + uri, method=metodoa, headers=goiburuak,
-                                          body='')
-        self.response.write(erantzuna)
-        self.response.write(content)
-        logging.debug(erantzuna)
-        logging.debug(content)
 
 def createRequestSignature(method, base_url, oauth_headers, request_params, oauth_token_secret):
     logging.debug('ENTERING createRequestSignature --->')
