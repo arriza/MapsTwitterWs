@@ -17,8 +17,8 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
-consumer_key = '1021545695247-7un012vm2gr006ufpohm7uvln0bedd90.apps.googleusercontent.com'
-consumer_secret = 'l3YVqZc5zGimmfeT29Oko1xj'
+consumer_key = 'CiEQzT75QW1QZPqIUhCZK0sf4'
+consumer_secret = '09wAlEB0tLQg4y9jFWkefX5Y1nOke4iiSoVm5OuuUxop9Hcu0J'
 oauth_token = ''
 oauth_token_secret = ''
 
@@ -53,13 +53,13 @@ class MainHandler(BaseHandler):
 
 class LoginAndAuthorize(BaseHandler):
     def get(self):
-        callback_uri = 'https://twitterwebsistemak.appspot.com/callback_uri'
+        callback_uri = 'http://mapstwitterws.appspot.com/callback_uri'
         logging.debug('ENTERING LoginAndAuthorize --->')
         http = httplib2.Http()
         method = 'POST'
         url = 'https://api.twitter.com/oauth/request_token'
         oauth_headers = {'oauth_callback': callback_uri}
-        goiburuak = {'User-Agent': 'Google App Engine',
+        goiburuak = {'User-Agent': 'MapsTwitterWs',
                      'Authorization': createAuthHeader(method, url, oauth_headers, None, None)}
         erantzuna, content = http.request(url, method, headers=goiburuak)
         if erantzuna['status'] != '200':
@@ -90,7 +90,7 @@ class twitter(BaseHandler):
         oauth_headers = {'oauth_token':self.session.get('oauth_token')}
         params = {'oauth_verifier' : oauth_verifier}
         edukia = urllib.urlencode(params)
-        goiburuak = {'User-Agent' : 'Aitor',
+        goiburuak = {'User-Agent' : 'MapsTwitterWs',
                      'Host' : zerbitzaria,
                      'Content-Type' : 'application/x-www-form-urlencoded',
                      'Accept' : '*/*',
@@ -137,6 +137,26 @@ def createAuthHeader(method, base_url, oauth_headers, request_params, oauth_toke
 
     return authorization_header
 
+def GetTimeLine(BaseHandler):
+    def get(self):
+        metodoa = 'GET'
+        uri = '/1.1/statuses/user_timeline.json?screen_name=twitterapi&count=2'
+        zerbitzaria = 'api.twitter.com'
+        oauth_headers = {'oauth_token': self.session.get('oauth_token')}
+        goiburuak = {'User-Agent': 'MapsTwitterWs',
+                     'Host': zerbitzaria,
+                     'Content-Type': 'application/x-www-form-urlencoded',
+                     'Accept': '*/*',
+                     'Authorization': createAuthHeader(metodoa, uri, oauth_headers,
+                                                       self.session.get('oauth_token_secret'))}
+
+        http = httplib2.Http()
+        erantzuna, content = http.request('https://' + zerbitzaria + uri, method=metodoa, headers=goiburuak,
+                                          body='')
+        self.response.write(erantzuna)
+        self.response.write(content)
+        logging.debug(erantzuna)
+        logging.debug(content)
 
 def createRequestSignature(method, base_url, oauth_headers, request_params, oauth_token_secret):
     logging.debug('ENTERING createRequestSignature --->')
@@ -173,6 +193,7 @@ app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/LoginAndAuthorize', LoginAndAuthorize),
     ('/callback_uri', twitter),
-    ('/mapa', mapa)
+    ('/mapa', mapa),
+    ('/timeline' , GetTimeLine)
 
 ], config=config, debug=True)
