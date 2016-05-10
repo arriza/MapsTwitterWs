@@ -105,13 +105,15 @@ class twitter(BaseHandler):
         secret_split = content.split('&')[1]
         secret_split = secret_split.split('=')[1]
         self.session['oauth_token_secret'] = secret_split
+        name_split = content.split('&')[3]
+        name_split = name_split.split('=')[1]
+        self.session['screen_name'] = name_split
 
-        '''
         self.response.write(erantzuna)
         self.response.write(content)
         logging.debug(erantzuna)
         logging.debug(content)
-        '''
+
         self.redirect('/timeline')
 
 
@@ -119,10 +121,11 @@ class GetTimeLine(BaseHandler):
     def get(self):
         logging.debug(self.session.get('oauth_token'))
         logging.debug(self.session.get('oauth_token_secret'))
+        hitza = raw_input('\nBilatu nahi duzu hitza sartu: ')
         metodoa = 'GET'
-        base_uri = '/1.1/search/tweets.json'
+        base_uri = '/1.1/statuses/user_timeline.json'
         zerbitzaria = 'api.twitter.com'
-        parametroak = {'q': '@bizargorri_'}
+        parametroak = {'q': "'"+hitza+"'"}
         params_encoded = urllib.urlencode(parametroak)
         oauth_headers = {'oauth_token': self.session.get('oauth_token')}
         goiburuak = {'User-Agent': 'MapsTwitterWs',
