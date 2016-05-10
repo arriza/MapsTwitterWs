@@ -111,16 +111,20 @@ class twitter(BaseHandler):
         logging.debug(erantzuna)
         logging.debug(content)
 
-        self.redirect('/timeline')
+        self.redirect('/hitzaBilatu')
+
+class hitzaBilatu(BaseHandler):
+    def get(self):
+        template = JINJA_ENVIRONMENT.get_template('hitzaSartu.html')
+        template_values = {}
+        self.response.write(template.render(template_values))
+
 
 
 class GetTimeLine(BaseHandler):
     def get(self):
         logging.debug(self.session.get('oauth_token'))
         logging.debug(self.session.get('oauth_token_secret'))
-        template = JINJA_ENVIRONMENT.get_template('hitzaSartu.html')
-        template_values = {}
-        self.response.write(template.render(template_values))
         hitza=self.response.__getattribute__('hitza')
         metodoa = 'GET'
         base_uri = '/1.1/statuses/user_timeline.json'
@@ -212,6 +216,7 @@ app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/LoginAndAuthorize', LoginAndAuthorize),
     ('/callback_uri', twitter),
+    ('/hitzaBilatu', hitzaBilatu),
     ('/mapa', mapa),
     ('/timeline' , GetTimeLine)
 
