@@ -119,17 +119,16 @@ class hitzaBilatu(BaseHandler):
         template_values = {}
         self.response.write(template.render(template_values))
 
-
-
 class GetTimeLine(BaseHandler):
     def get(self):
         logging.debug(self.session.get('oauth_token'))
         logging.debug(self.session.get('oauth_token_secret'))
-        hitza=self.response.__getattribute__('hitza')
+        hitza=self.request.get('hitza')
         metodoa = 'GET'
-        base_uri = '/1.1/statuses/user_timeline.json'
+        base_uri = '/1.1/search/tweets.json'
         zerbitzaria = 'api.twitter.com'
-        parametroak = {'q': hitza}
+        parametroak = {'q': hitza,
+                       'geocode':'43.311373,-2.68084,100mi'}
         params_encoded = urllib.urlencode(parametroak)
         oauth_headers = {'oauth_token': self.session.get('oauth_token')}
         goiburuak = {'User-Agent': 'MapsTwitterWs',
@@ -146,7 +145,8 @@ class GetTimeLine(BaseHandler):
         logging.debug(self.session.get('oauth_token'))
         logging.debug(self.session.get('oauth_token_secret'))
 
-
+    def post(self):
+        self.get()
 
 class mapa(BaseHandler):
     def get(self):
