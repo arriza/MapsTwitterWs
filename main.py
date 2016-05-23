@@ -149,19 +149,21 @@ class GetTimeLine(BaseHandler):
         #self.response.write(content)
         for each in erantzuna['statuses']:
             if each.has_key('coordinates'):
-                coord_split = each.split('[')[1]
-                coord_split = coord_split.split(']')[0]
-                lat_split = coord_split.split(',')[0]
-                long_split = coord_split.split(',')[1]
-                self.session['coordinates'] = coord_split
-                #bikotea.append(each['coordinates'])
+                koordenatuak = each.get('coordinates')
+                #for each2 in koordenatuak:
+                    #self.response.write(each2[0] + '       ' + each2[1])
 
+                koordString = str(koordenatuak)
 
-        self.response.write(lat_split)
-        self.response.write(long_split)
+                koordGarbiak = koordString.split('[')[1].split(']')[0]
 
+                latitudea = koordGarbiak.split(',')[0]
+                longitudea = koordGarbiak.split(',')[1].split(' ')[1]
 
+                self.response.write('latitudea  :   ' + latitudea)
+                self.response.write('longitudea :   ' + longitudea)
 
+                #self.response.write(koordString)
 
     def post(self):
         self.get()
