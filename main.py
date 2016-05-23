@@ -159,6 +159,11 @@ class GetTimeLine(BaseHandler):
                 self.response.write('latitudea  :   ' + latitudea)
                 self.response.write('longitudea :   ' + longitudea)
 
+                self.session['latitudea'] = latitudea
+                self.session['longitudea'] = longitudea
+
+        self.redirect('/mapa')
+
     def post(self):
         self.get()
 
