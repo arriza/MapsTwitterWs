@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <!center: {lat: 43.311373, lng: -2.68084},>
+<!center: {lat: self.session.get['latitudea'], lng: self.session.get['longitudea']},>
+<!Arazoa sesiotik lat eta lng hartzerako momentuan dago(29. lerroa), ez ditu hartzen(ez dakit horrela egin behar bada edo ez)>
 {% autoescape true %}
 <html>
   <head>
@@ -24,7 +26,7 @@
 var map;
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: self.session.get['latitudea'], lng: self.session.get['longitudea']},
+    center: {lat: 43.311373, lng: -2.68084},
     zoom: 8
   });
 }
