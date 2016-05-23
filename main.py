@@ -11,6 +11,7 @@ import time
 import hmac
 import binascii
 import hashlib
+import json
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -121,6 +122,7 @@ class hitzaBilatu(BaseHandler):
 
 class GetTimeLine(BaseHandler):
     def get(self):
+        koordenatuak=[]
         logging.debug(self.session.get('oauth_token'))
         logging.debug(self.session.get('oauth_token_secret'))
         hitza=self.request.get('hitza')
@@ -128,7 +130,9 @@ class GetTimeLine(BaseHandler):
         base_uri = '/1.1/search/tweets.json'
         zerbitzaria = 'api.twitter.com'
         parametroak = {'q': hitza,
-                       'geocode':'43.311373,-2.68084,100mi'}
+                       'count': '100',
+                       'result_type': 'mixed'}
+                     #  'geocode':'43.311373,-2.68084,100mi'}
         params_encoded = urllib.urlencode(parametroak)
         oauth_headers = {'oauth_token': self.session.get('oauth_token')}
         goiburuak = {'User-Agent': 'MapsTwitterWs',
@@ -138,12 +142,26 @@ class GetTimeLine(BaseHandler):
 
         http = httplib2.Http()
         erantzuna, content = http.request('https://' + zerbitzaria + base_uri + '?' + params_encoded, method=metodoa, headers=goiburuak,
-                                          body='')
-        self.response.write(content)
-        logging.debug(erantzuna)
-        logging.debug(content)
-        logging.debug(self.session.get('oauth_token'))
-        logging.debug(self.session.get('oauth_token_secret'))
+                                      body='')
+
+        bikotea = []
+        erantzuna = json.loads(content)
+        #self.response.write(content)
+        for each in erantzuna['statuses']:
+            if each.has_key('coordinates'):
+                coord_split = each.split('[')[1]
+                coord_split = coord_split.split(']')[0]
+                lat_split = coord_split.split(',')[0]
+                long_split = coord_split.split(',')[1]
+                self.session['coordinates'] = coord_split
+                #bikotea.append(each['coordinates'])
+
+
+        self.response.write(lat_split)
+        self.response.write(long_split)
+
+
+
 
     def post(self):
         self.get()
