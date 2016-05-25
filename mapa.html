@@ -31,7 +31,7 @@ function initMap() {
     zoom: 8,
   });
    var marker = new google.maps.Marker({
-    position: myLatLng,
+    position: {lat: myLatLng.lat, lng: myLatLng.lng},
     map: map,
     title: 'Txioa hemen idatzi da'
   });
