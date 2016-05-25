@@ -1,5 +1,6 @@
 from webapp2_extras import sessions
 from google.appengine.api import users
+from google.appengine.ext import ndb
 import webapp2
 import jinja2
 import os
@@ -157,6 +158,12 @@ class GetTimeLine(BaseHandler):
                 lekua = str(each.get('place').get('full_name'))
 
                 #Koordenatuak json formatuan
+
+                template_values = {
+                    'latitude': latitudea,
+                    'longitude': longitudea,
+                    'place': lekua}
+
                 koordenatuak.append([latitudea, longitudea, lekua])
 
                 datuak = {'location': [latitudea, longitudea], 'koordenatuak': koordenatuak}

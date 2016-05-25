@@ -25,16 +25,20 @@
 
 var map;
 function initMap() {
-    var myLatLng = {lat: location[0], lng: location[1]};
- var map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 43.311373, lng: -2.68084},
-    zoom: 8,
-  });
-   var marker = new google.maps.Marker({
-    position: {lat: myLatLng.lat, lng: myLatLng.lng},
-    map: map,
-    title: 'Txioa hemen idatzi da'
-  });
+    var latLng = [
+        {% for each in koordenatuak %}
+            { lat: {{ each[0] }}, lng: {{ each[1] }}, title: {{ each[2] }} },
+        {% endfor %}
+        ];
+    var map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 43.311373, lng: -2.68084},
+        zoom: 8,
+    });
+    var marker = new google.maps.Marker({
+        position: {lat:  latLng[0]['lat'] , lng:  latLng[0]['lng']  },
+        map: map,
+        title: latLng[0]['title']
+    });
 }
 
     </script>
