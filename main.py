@@ -156,11 +156,9 @@ class GetTimeLine(BaseHandler):
                 latitudea = koordGarbiak.split(',')[0]
                 longitudea = koordGarbiak.split(',')[1].split(' ')[1]
 
-                self.response.write('latitudea  :   ' + latitudea)
-                self.response.write('longitudea :   ' + longitudea)
-
-                self.session['latitudea'] = latitudea
-                self.session['longitudea'] = longitudea
+                bikotea=latitudea+longitudea
+                self.session['koordenatuak'] = bikotea
+                self.response.write('koordenatuak  :   ' + bikotea)
 
         self.redirect('/mapa')
 
@@ -170,7 +168,8 @@ class GetTimeLine(BaseHandler):
 class mapa(BaseHandler):
     def get(self):
         template = JINJA_ENVIRONMENT.get_template('mapa.html')
-        template_values = {}
+        template_values = {'latitudea': self.session.get('latitudea'),
+                           'longitudea': self.session.get('longitudea')}
         self.response.write(template.render(template_values))
 
 
