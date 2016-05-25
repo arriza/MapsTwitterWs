@@ -122,7 +122,7 @@ class hitzaBilatu(BaseHandler):
 
 class GetTimeLine(BaseHandler):
     def get(self):
-        koordenatuak=[]
+        koordenatuak = []
         logging.debug(self.session.get('oauth_token'))
         logging.debug(self.session.get('oauth_token_secret'))
         hitza=self.request.get('hitza')
@@ -144,23 +144,33 @@ class GetTimeLine(BaseHandler):
         erantzuna, content = http.request('https://' + zerbitzaria + base_uri + '?' + params_encoded, method=metodoa, headers=goiburuak,
                                       body='')
 
-        bikotea = []
         erantzuna = json.loads(content)
         #self.response.write(content)
         for each in erantzuna['statuses']:
             if each.has_key('coordinates'):
-                koordenatuak = str(each.get('coordinates'))
+                koord = str(each.get('coordinates'))
 
-                koordGarbiak = koordenatuak.split('[')[1].split(']')[0]
+                koordGarbiak = koord.split('[')[1].split(']')[0]
 
-                latitudea = koordGarbiak.split(',')[0]
-                longitudea = koordGarbiak.split(',')[1].split(' ')[1]
+                latitudea = float(koordGarbiak.split(',')[0])
+                longitudea = float(koordGarbiak.split(',')[1].split(' ')[1])
+                lekua = str(each.get('place').get('full_name'))
 
-                bikotea=latitudea+longitudea
-                self.session['koordenatuak'] = bikotea
-                self.response.write('koordenatuak  :   ' + bikotea)
+                #Koordenatuak json formatuan
+                koordenatuak.append([latitudea, longitudea, lekua])
 
-        self.redirect('/mapa')
+                datuak = {'location': [latitudea, longitudea], 'koordenatuak': koordenatuak}
+
+                #self.session['latitudea'] = latitudea
+                #self.session['longitudea'] = longitudea
+                #self.session['lekua'] = lekua
+
+                #self.response.write('lat   :   ' + str(koordenatuak[0][0]))
+                #self.response.write('lng   :   ' + str(koordenatuak[0][1]))
+                #self.response.write('lekua   :   ' + koordenatuak[0][2])
+
+        template = JINJA_ENVIRONMENT.get_template('/mapa.html')
+        self.response.write(template.render(datuak))
 
     def post(self):
         self.get()
