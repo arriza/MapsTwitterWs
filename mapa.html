@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <!center: {lat: 43.311373, lng: -2.68084},>
+<!center: {lat: self.session.get['latitudea'], lng: self.session.get['longitudea']},>
+<!Arazoa sesiotik lat eta lng hartzerako momentuan dago(29. lerroa), ez ditu hartzen(ez dakit horrela egin behar bada edo ez)>
 {% autoescape true %}
 <html>
   <head>
-    <title>Mapa</title>
+    <title>Simple Map</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <style>
@@ -21,20 +23,22 @@
     <div id="map"></div>
     <script>
 
-        function initMap() {
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 4,
-                center: {lat: 43.311373, lng: -2.68084 }
-            });
-            var marker = new google.maps.Marker({
-                position: {lat: koordenatuak[0][0] , lng: koordenatuak[0][1] },
-                title: koordenatuak[0][2],
-                map: map
-            });
-        };
+var map;
+function initMap() {
+    var myLatLng = {lat: location[0], lng: location[1]};
+ var map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 43.311373, lng: -2.68084},
+    zoom: 8,
+  });
+   var marker = new google.maps.Marker({
+    position: myLatLng,
+    map: map,
+    title: 'Txioa hemen idatzi da'
+  });
+}
 
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AlzaSyC2OV5Mg0sTfjHV_Epp6U1tcZ3bVKLAQOc&signed_in=true&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2OV5Mg0sTfjHV_Epp6U1tcZ3bVKLAQOc&callback=initMap"
         async defer></script>
   </body>
 </html>
