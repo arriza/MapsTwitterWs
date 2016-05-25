@@ -148,36 +148,21 @@ class GetTimeLine(BaseHandler):
         erantzuna = json.loads(content)
         #self.response.write(content)
         for each in erantzuna['statuses']:
-            if each.has_key('coordinates'):
+            if (each.get('coordinates')!=None):
                 koord = str(each.get('coordinates'))
 
                 koordGarbiak = koord.split('[')[1].split(']')[0]
 
-                latitudea = float(koordGarbiak.split(',')[0])
-                longitudea = float(koordGarbiak.split(',')[1].split(' ')[1])
+                longitudea = koordGarbiak.split(',')[0]
+                latitudea = koordGarbiak.split(',')[1].split(' ')[1]
                 lekua = str(each.get('place').get('full_name'))
-
-                #Koordenatuak json formatuan
-
-                template_values = {
-                    'latitude': latitudea,
-                    'longitude': longitudea,
-                    'place': lekua}
 
                 koordenatuak.append([latitudea, longitudea, lekua])
 
-                datuak = {'location': [latitudea, longitudea], 'koordenatuak': koordenatuak}
-
-                #self.session['latitudea'] = latitudea
-                #self.session['longitudea'] = longitudea
-                #self.session['lekua'] = lekua
-
-                #self.response.write('lat   :   ' + str(koordenatuak[0][0]))
-                #self.response.write('lng   :   ' + str(koordenatuak[0][1]))
-                #self.response.write('lekua   :   ' + koordenatuak[0][2])
+        template_values = {'location': 'hutsik', 'koordenatuak': koordenatuak}
 
         template = JINJA_ENVIRONMENT.get_template('/mapa.html')
-        self.response.write(template.render(datuak))
+        self.response.write(template.render(template_values))
 
     def post(self):
         self.get()

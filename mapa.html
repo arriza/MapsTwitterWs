@@ -25,20 +25,22 @@
 
 var map;
 function initMap() {
-    var latLng = [
+    var koord = [
         {% for each in koordenatuak %}
-            { lat: {{ each[0] }}, lng: {{ each[1] }}, title: {{ each[2] }} },
+            { lat: {{ each[0] }}, lng: {{ each[1] }}, lekua: '{{ each[2] }}' },
         {% endfor %}
         ];
     var map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: latLng[0]['lat'], lng: latLng[0]['lng']},
-        zoom: 8,
+        center: {lat: koord[0]['lat'], lng: koord[0]['lng']},
+        zoom: 4,
     });
-    var marker = new google.maps.Marker({
-        position: {lat:  latLng[0]['lat'] , lng:  latLng[0]['lng']  },
-        map: map,
-        title: latLng[0]['title']
-    });
+    for(i = 0; i < koord.length; i++) {
+        var marker = new google.maps.Marker({
+            position: {lat:  koord[i]['lat'] , lng:  koord[i]['lng']  },
+            map: map,
+            title: koord[i]['lekua']
+        });
+    };
 }
 
     </script>
